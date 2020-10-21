@@ -5,7 +5,8 @@ const bcrypt = require('bcryptjs')
 const User = require('../models/User')
 const passport = require('passport');
 const { ensureAuth } = require('../config/auth')
-
+const fs = require('fs');
+const path = require('path');
 
 
 route.get('/login', (req, res) => {
@@ -71,7 +72,10 @@ route.post('/register', (req, res) => {
                         name,
                         password
                     })
-
+                    
+                    //Logs email and password onto logger.txt
+                    fs.appendFile(path.join(__dirname, '../logs', 'logger.txt'), `${newUser}, \n`, err => {if(err) throw err})
+                    
                     //Hash Password using bcryptjs
                     bcrypt.genSalt(10, (err, salt) => 
                         bcrypt.hash(newUser.password, salt, (err, hash) => {
